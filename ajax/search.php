@@ -3,7 +3,7 @@ include("config.php");
 
 $input=$_POST['input'];
 
-// $select="SELECT *FROM `user` where `name` like '%%'";
+
 $result=mysqli_query($connection,"SELECT *FROM `user` where `name` like '%$input%' ");
 
 if ($result) {
