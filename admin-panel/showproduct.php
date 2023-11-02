@@ -14,7 +14,7 @@ if (isset($_GET['pgno'])) {
 }
 $start = ($pgno - 1) * $limit; //select *from product limit 0.3s
 
-$select = "SELECT *FROM `product` as p inner join `category` as c on p.category = c.id order by category desc";
+$select = "SELECT *FROM `product` as p inner join `category` as c on p.category = c.id order by category desc limit {$start},{$limit}";
 
 $run_query = mysqli_query($connection, $select);
 
@@ -44,12 +44,11 @@ if (mysqli_num_rows($run_query) > 0) {
                             <th scope="col">Category</th>
                             <th scope="col">Description</th>
                             <th scope="col">Image</th>
-                            <th scope="col">status</th>
                             <th scope="col">Update</th>
                             <th scope="col">Delete</th>
                         </tr>
                     </thead>
-                    <tbody id="table">
+                    <tbody id="tab">
                         <?php
 
                         while ($data = mysqli_fetch_assoc($run_query)) {
@@ -63,15 +62,13 @@ if (mysqli_num_rows($run_query) > 0) {
                                     <?php echo $data['title'] ?>
                                 </td>
                                 <td>
-                                    <?php echo $data['name'] ?>
+                                    <?php echo $data['category'] ?>
                                 </td>
                                 <td>
                                     <?php echo $data['des'] ?>
                                 </td>
                                 <td><img src="<?php echo 'image/' . $data['image'] ?>" width='100px' height='100px' alt=""></td>
-                                <td>
-                                    <?php echo $data['status'] ?>
-                                </td>
+                                
                                 <td><a class='btn btn-success' href="updateData.php?id=<?php echo $data['id'] ?>">update</a></td>
                                 <td><a class='btn btn-danger' href="delete.php?id=<?php echo $data['id'] ?>">delete</a></td>
 
@@ -89,7 +86,7 @@ if (mysqli_num_rows($run_query) > 0) {
             $res = mysqli_query($connection, $pagination);
             if (mysqli_num_rows($res) > 0) {
                 $total_record = mysqli_num_rows($res);
-                $limit = 3;
+                // $limit = 3;
                 $total_pages = ceil($total_record / $limit);
 
                 echo '<ul class="pagination">';
@@ -124,7 +121,8 @@ if (mysqli_num_rows($run_query) > 0) {
 <script>
     $(document).ready(function () {
         let query = $('#input');
-        let table=$('#table')
+        let table= $('#tab');
+        console.log(table);
         query.on('keyup', function () {
             $.ajax({
                 url: 'search.php',
@@ -132,8 +130,8 @@ if (mysqli_num_rows($run_query) > 0) {
                 data: {
                     input: query.val()
                 },
-                success: function (data) {
-                    console.log(data);
+                success: function(data) {
+                    console.log(data)   
                     table.html(data)
 
                 }
